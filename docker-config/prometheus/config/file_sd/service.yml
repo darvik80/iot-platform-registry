@@ -1,0 +1,5 @@
+---
+- targets: ['host.docker.internal:3333']
+  labels:
+    resource: go-gateway
+    __metrics_path__: '/metrics'

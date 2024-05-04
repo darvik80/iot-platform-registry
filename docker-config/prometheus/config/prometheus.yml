@@ -1,0 +1,11 @@
+global:
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  - file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/*.yml
+    job_name: service-discovery

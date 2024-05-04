@@ -1,0 +1,86 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./docker-config/prometheus/config:/etc/prometheus/
+      - ./docker-data/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.external-url=http://nginx/prometheus/'
+    expose:
+      - "9090"
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  alert-manager:
+    image: prom/alertmanager:latest
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    expose:
+      - "9093"
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./docker-config/alertmanager/config:/etc/alertmanager/
+
+  grafana:
+    image: grafana/grafana:latest
+    links:
+      - prometheus:prometheus
+    volumes:
+      - ./docker-data/grafana:/var/lib/grafana
+      - ./docker-config/grafana/config/grafana.ini:/etc/grafana/grafana.ini
+      - ./docker-config/grafana/config/provisioning/datasources/:/etc/grafana/provisioning/datasources/
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  nginx:
+    image: nginx:latest
+    links:
+      - prometheus:prometheus
+      - grafana:grafana
+      - rabbitmq:rabbitmq
+    environment:
+      - NGINX_HOST=iot.crearts.xyz
+      - NGINX_PORT=80
+    volumes:
+      - ./docker-config/nginx/config/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8082:80"
+
+  rabbitmq:
+    build:
+      context: docker-config
+      dockerfile: DockerFile_rabbitmq
+    env_file:
+      - docker-config/api.env
+    ports:
+      - "5671:5671"
+      - "5672:5672"
+      - "15672:15672"
+      - "1883:1883"
+      - "8883:8883"
+    volumes:
+      - ./docker-data/rabbitmq:/var/lib/rabbitmq
+
+  postgres:
+    env_file:
+      - docker-config/api.env
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-data/postgresql:/var/lib/postgresql/data
+
+  node-red:
+    image: nodered/node-red
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./docker-data/node-red:/data
