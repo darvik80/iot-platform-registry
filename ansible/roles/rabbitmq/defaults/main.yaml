@@ -1,0 +1,9 @@
+---
+#rabbitmq_series: 3.8
+#rabbitmq_series_rpm_version:
+#rabbitmq_series_deb_version:
+
+rabbitmq_deb_repo_url: https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb
+rabbitmq_deb_gpg_url: https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key
+rabbitmq_deb_repo_tpl: etc/apt/sources.list.d/rabbitmq.list.j2
+rabbitmq_deb_pinning_tpl: etc/apt/preferences.d/rabbitmq.j2

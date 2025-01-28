@@ -27,7 +27,9 @@
         <url/>
     </scm>
     <properties>
-        <java.version>23</java.version>
+        <java.version>21</java.version>
+        <knockoutjs.version>3.4.0</knockoutjs.version>
+        <bootstrap.version>5.3.3</bootstrap.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -95,13 +97,33 @@
 
         <dependency>
             <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
+            <artifactId>micrometer-registry-otlp</artifactId>
         </dependency>
+
+        <!-- web deps -->
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>knockoutjs</artifactId>
+            <version>${knockoutjs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

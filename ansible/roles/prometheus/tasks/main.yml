@@ -1,0 +1,30 @@
+---
+- name: "[Prometheus] Install prometheus"
+  include_role:
+    name: prometheus.prometheus.prometheus
+  vars:
+    prometheus_version: "2.53.1"
+    prometheus_scrape_config_files:
+      - "files/scrapes/*.yml"
+    prometheus_skip_install: "{{ skip_install }}"
+    prometheus_scrape_configs:
+      - job_name: "prometheus"
+        metrics_path: "/metrics"
+        static_configs:
+          - targets:
+              - "{{ prometheus_url }}"
+      - job_name: 'grafana_metrics'
+        scrape_interval: 15s
+        scrape_timeout: 5s
+        static_configs:
+          - targets:
+              - "{{ grafana_url }}"
+  tags:
+    - setup
+
+- name: Reload prometheus
+  become: true
+  ansible.builtin.systemd:
+    name: prometheus
+    state: reloaded
+  when: prometheus_restarted is not defined

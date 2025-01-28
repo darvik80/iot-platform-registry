@@ -9,4 +9,6 @@ import xyz.crearts.iot.registry.entity.DeviceDO;
 public interface  DeviceRepository extends JpaSpecificationExecutor<DeviceDO>, JpaRepository<DeviceDO, Long> {
     DeviceDO findFirstByClientIdAndRegistryId(String clientId, long registryId);
     DeviceDO findFirstBySessionId(String sessionId);
+    DeviceDO findFirstByNameAndRegistryId(String name, long registryId);
+    DeviceDO findFirstByNameAndRegistry_Name(String name, String registry);
 }

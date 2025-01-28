@@ -1,0 +1,29 @@
+---
+- name: Find files and folders in /var/lib/grafana/dashboards
+  find:
+    paths: "/var/lib/grafana/dashboards"
+    recurse: yes  # To find items in subdirectories as well
+  register: files_to_delete
+  tags:
+    - dashboard
+- name: Remove all files and folders found
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ files_to_delete.files }}"
+  tags:
+    - dashboard
+- name: Import Grafana dashboards
+  copy:
+    src: files/dashboards/
+    dest: /var/lib/grafana/dashboards
+  tags:
+    - dashboard
+
+- name: Restart Grafana service
+  systemd:
+    name: grafana-server
+    enabled: yes
+    state: restarted
+  tags:
+    - dashboard

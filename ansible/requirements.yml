@@ -1,0 +1,8 @@
+---
+collections:
+  - ansible.posix
+  - community.rabbitmq
+  - community.postgresql
+  - community.docker
+  - prometheus.prometheus
+  - grafana.grafana

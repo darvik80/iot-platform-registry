@@ -1,0 +1,10 @@
+---
+- name: "[Postgresql Exporter] Install postgresql exporter"
+  include_role:
+    name: prometheus.prometheus.postgres_exporter
+  vars:
+    postgres_exporter_skip_install: "{{ skip_install }}"
+    postgres_exporter_version: "0.15.0"
+    postgres_exporter_system_user: "postgres"
+  tags:
+    - setup

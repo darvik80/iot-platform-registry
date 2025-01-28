@@ -18,7 +18,7 @@ public class MetricCollector {
 
     public void updateGauge(String name, String product, String device, double value) {
         var key = product + "." + device + "." + name;
-        metricsGauges.computeIfAbsent(key, _ -> this.metrics.gauge(
+        metricsGauges.computeIfAbsent(key, k -> this.metrics.gauge(
                         name, List.of(Tag.of("product", product), Tag.of("device", device)),
                         new AtomicDouble(value))).set(value);
     }

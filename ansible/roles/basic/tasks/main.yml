@@ -1,0 +1,28 @@
+---
+- name: "[Bifrost] Create service system group"
+  group:
+    name: "{{ service_group }}"
+    system: true
+    state: present
+
+- name: "[Bifrost] Create service system user"
+  user:
+    name: "{{ service_user }}"
+    system: true
+    shell: "/usr/sbin/nologin"
+    group: "{{ service_group }}"
+    createhome: true
+
+- name: "[Bifrost] Create app home dir"
+  file:
+    path: "{{ iot_dir }}/bin"
+    state: directory
+    owner: "{{ service_user }}"
+    recurse: yes
+
+- name: "[Bifrost] Create etc dir"
+  file:
+    path: "{{ iot_dir }}/etc"
+    state: directory
+    owner: "{{ service_user }}"
+    recurse: yes

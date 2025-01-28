@@ -1,0 +1,5 @@
+---
+- hosts: iot-registry
+  become: yes
+  roles:
+    - basic

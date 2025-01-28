@@ -1,0 +1,8 @@
+---
+- import_playbook: plays/basic.yml
+- import_playbook: plays/postgresql.yml
+- import_playbook: plays/rabbitmq.yml
+- import_playbook: plays/postgresql_exporter.yml
+- import_playbook: plays/node_exporter.yml
+- import_playbook: plays/prometheus.yml
+- import_playbook: plays/grafana.yml

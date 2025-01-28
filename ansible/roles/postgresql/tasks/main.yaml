@@ -1,0 +1,65 @@
+---
+- name: "[PostgreSQL] Add key for Postgres repo"
+  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+  become: true
+
+- name: "[PostgreSQL] Add Postgres repo to sources list"
+  apt_repository:
+    repo: >-
+      deb http://apt.postgresql.org/pub/repos/apt/ 
+      {{ ansible_distribution_release }}-pgdg main
+    state: present
+  become: true
+
+- name: "[PostgreSQL] Update and upgrade apt packages"
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: 'yes'
+
+- name: "[PostgreSQL] Install deps"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-psycopg2
+    - acl
+    - libpq-dev
+    - postgresql
+
+- name: "[PostgreSQL] Create app database"
+  community.postgresql.postgresql_db:
+    state: present
+    name: "{{ db_name }}"
+  become: yes
+  become_user: postgres
+  vars:
+    allow_world_readable_tmpfiles: true
+
+- name: "[PostgreSQL] Create db user"
+  postgresql_user:
+    state: present
+    name: "{{ db_username }}"
+    password: "{{ db_password }}"
+  become: yes
+  become_user: postgres
+
+- name: "[PostgreSQL] Grant db user access to app db"
+  postgresql_privs:
+    type: database
+    database: "{{ db_name }}"
+    roles: "{{ db_username }}"
+    grant_option: no
+    privs: all
+  become: yes
+  become_user: postgres
+
+- name: "[PostgreSQL] Grant db user access to app db.public schema"
+  postgresql_privs:
+    type: schema
+    db: "{{ db_name }}"
+    objs: public
+    roles: "{{ db_username }}"
+    privs: all
+  become: yes
+  become_user: postgres

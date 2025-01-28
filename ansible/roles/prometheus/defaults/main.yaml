@@ -1,0 +1,5 @@
+---
+prometheus_url: localhost:9090
+grafana_url: localhost:3000
+
+skip_install: false

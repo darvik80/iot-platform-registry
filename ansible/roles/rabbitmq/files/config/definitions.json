@@ -1,0 +1,107 @@
+{
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "2cKgDOcNacP/SzJbw2N6yfpg5iQ9wVhkAuf1Rvt7CVoiyovs",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    },
+    {
+      "name": "bf_sorting_engine",
+      "password_hash": "2cKgDOcNacP/SzJbw2N6yfpg5iQ9wVhkAuf1Rvt7CVoiyovs",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "iot_registry"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "iot_registry",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "iot_registry",
+      "vhost": "iot_registry",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_gateway",
+      "vhost": "iot_mushroom",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_gateway",
+      "vhost": "sort_unit",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_gateway",
+      "vhost": "digital_clock",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_gateway",
+      "vhost": "sort_machine",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "iot_scanner",
+      "vhost": "iot_mushroom",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_connector",
+      "vhost": "iot_mushroom",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "bf_sorting_engine",
+      "vhost": "iot_mushroom",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [],
+  "policies": [],
+  "queues": [],
+  "exchanges": [],
+  "bindings": []
+}

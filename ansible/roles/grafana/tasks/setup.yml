@@ -1,0 +1,81 @@
+---
+- name: "[Grafana] Import Grafana GPG signing key [Debian/Ubuntu]"
+  apt_key:
+    url: https://apt.grafana.com/gpg.key
+    keyring: /etc/apt/keyrings/grafana.gpg
+    state: present
+    validate_certs: false
+  register: _add_apt_key
+  until: _add_apt_key is succeeded
+  retries: 5
+  delay: 2
+  tags:
+    - setup
+
+- name: "[Grafana] Add Grafana repo to sources list"
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: grafana
+    update_cache: false
+  become: true
+  with_items:
+    - deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
+  tags:
+    - setup
+
+- name: "[Grafana] Update cache"
+  apt:
+    update_cache: true
+  changed_when: false
+  tags:
+    - setup
+
+- name: "[Grafana] Install deps Grafana [Debian/Ubuntu]"
+  package:
+    name:
+      - apt-transport-https
+      - software-properties-common
+    state: present
+    install_recommends: false
+  tags:
+    - setup
+
+- name: "[Grafana] Install Grafana [Debian/Ubuntu]"
+  package:
+    name:
+      - grafana
+    state: present
+    install_recommends: false
+  tags:
+    - setup
+
+- name: Configure Grafana provisioning
+  template:
+    src: templates/providers.yml.j2
+    dest: /etc/grafana/provisioning/dashboards/default.yaml
+  tags:
+    - setup
+
+- name: Configure Grafana data sources
+  template:
+    src: templates/datasources.yml.j2
+    dest: /etc/grafana/provisioning/datasources/default.yaml
+  tags:
+    - setup
+
+- name: "[Grafana] Enable Grafana service"
+  systemd:
+    name: grafana-server
+    enabled: yes
+    state: started
+  tags:
+    - setup
+
+- name: "[Grafana] Restart Grafana service"
+  systemd:
+    name: grafana-server
+    enabled: yes
+    state: restarted
+  tags:
+    - setup

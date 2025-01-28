@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    type: file
+    allowUiUpdates: true
+    options:
+      path: {{ grafana_dashboard_dir }}
+      foldersFromFilesStructure: true

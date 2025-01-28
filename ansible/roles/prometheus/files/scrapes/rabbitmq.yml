@@ -1,0 +1,11 @@
+scrape_configs:
+  - job_name: "rabbitmq"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - "localhost:15692"
+  - job_name: "rabbitmq-detailed"
+    metrics_path: "/metrics/detailed"
+    static_configs:
+      - targets:
+          - "localhost:15692"

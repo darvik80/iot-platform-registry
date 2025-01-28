@@ -1,0 +1,28 @@
+scrape_configs:
+  - job_name: bifrost-mushroom
+    scrape_interval: 15s
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - localhost:8083
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+  - job_name: scanner-simulator
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - localhost:8880
+  - job_name: bifrost-gateway
+    scrape_interval: 15s
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - localhost:8081
+  - job_name: bifrost-sorting-engine
+    scrape_interval: 15s
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - localhost:8082

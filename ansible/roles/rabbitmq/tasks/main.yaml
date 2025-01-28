@@ -1,0 +1,124 @@
+---
+- name: "[RabbitMQ] Import RabbitMQ GPG signing key [Debian/Ubuntu]"
+  apt_key:
+    url: https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA
+    keyring: /usr/share/keyrings/com.rabbitmq.team.gpg
+    state: present
+    validate_certs: false
+  register: _add_apt_key
+  until: _add_apt_key is succeeded
+  retries: 5
+  delay: 2
+
+- name: "[RabbitMQ] Import RabbitMQ GPG  modern Erlang repository key [Debian/Ubuntu]"
+  apt_key:
+    url: https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key
+    keyring: /usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg
+    state: present
+    validate_certs: false
+  register: _add_apt_key
+  until: _add_apt_key is succeeded
+  retries: 5
+  delay: 2
+
+- name: "[RabbitMQ] Import RabbitMQ GPG RabbitMQ repository key [Debian/Ubuntu]"
+  apt_key:
+    url: https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
+    keyring: /usr/share/keyrings/rabbitmq.9F4587F226208342.gpg
+    state: present
+    validate_certs: false
+  become: true
+  register: _add_apt_key
+  until: _add_apt_key is succeeded
+  retries: 5
+  delay: 2
+
+- name: "[RabbitMQ] Add Rabbitmq repo to sources list"
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: rabbitmq
+    update_cache: false
+  become: true
+  with_items:
+    - deb [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main
+    - deb [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main
+    - deb [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main
+    - deb [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main
+
+- name: "[RabbitMQ] Update cache"
+  apt:
+    update_cache: true
+  changed_when: false
+
+- name: "[RabbitMQ] Install deps RabbitMQ [Debian/Ubuntu]"
+  package:
+    name:
+      - erlang-base
+      - erlang-asn1
+      - erlang-crypto
+      - erlang-eldap
+      - erlang-ftp
+      - erlang-inets
+      - erlang-mnesia
+      - erlang-os-mon
+      - erlang-parsetools
+      - erlang-public-key
+      - erlang-runtime-tools
+      - erlang-snmp
+      - erlang-ssl
+      - erlang-syntax-tools
+      - erlang-tftp
+      - erlang-tools
+      - erlang-xmerl
+    state: present
+    install_recommends: false
+
+- name: "[RabbitMQ] Install RabbitMQ [Debian/Ubuntu]"
+  package:
+    name:
+      - rabbitmq-server
+    state: present
+    install_recommends: false
+
+- name: "[RabbitMQ] Check if RabbitMQ data folder exists"
+  stat:
+    path: /etc/rabbitmq/definitions.json
+  register: rabbit_data_dir_stat
+  ignore_errors: yes
+
+- name: "[RabbitMQ] Remove RabbitMQ config dir"
+  ansible.builtin.file:
+    path: /etc/rabbitmq
+    state: absent
+  when: rabbit_data_dir_stat.stat.exists == False
+
+- name: "[RabbitMQ] Configure RabbitMQ CFG"
+  copy:
+    src: files/config/
+    dest: /etc/rabbitmq
+  when: rabbit_data_dir_stat.stat.exists == False
+
+- name: "[RabbitMQ] Configure RabbitMQ TLS"
+  copy:
+    src: files/tls
+    dest: /etc/rabbitmq
+  when: rabbit_data_dir_stat.stat.exists == False
+
+- name: "[Gateway] Prepare {{ gateway_artifact }} env"
+  template:
+    src: "login.env.j2"
+    dest: "/etc/rabbitmq/login.env"
+  when: rabbit_data_dir_stat.stat.exists == False
+
+- name: "[RabbitMQ] Enable RabbitMQ service"
+  systemd:
+    name: rabbitmq-server
+    enabled: yes
+    state: started
+
+- name: "[RabbitMQ] Restart Rabbitmq service"
+  systemd:
+    name: rabbitmq-server
+    enabled: yes
+    state: restarted
