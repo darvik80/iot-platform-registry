@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import xyz.crearts.iot.registry.entity.converter.HashMapConverter;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -22,9 +21,6 @@ public class RegistryDO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
-//    @OneToMany(mappedBy = "registry")
-//    private Set<DeviceDO> devices = new HashSet<>();
 
     @Column
     @CreationTimestamp
@@ -45,13 +41,6 @@ public class RegistryDO {
     @Column
     private String name;
 
-    @Column(nullable = false)
-    @ColumnDefault("gen_random_uuid()")
-    private String uuid;
-
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> metadata;
-
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> configuration;
 }

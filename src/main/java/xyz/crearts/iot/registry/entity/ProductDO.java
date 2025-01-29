@@ -11,20 +11,24 @@ import xyz.crearts.iot.registry.entity.converter.HashMapConverter;
 import java.sql.Timestamp;
 import java.util.Map;
 
+/**
+ * @author ivan.kishchenko
+ * email ivan.kishchenko@lazada.com
+ */
 @Getter
 @Setter
-@Entity(name = "device")
-@Table(name = "device", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"product_id", "name"}),
+@Entity(name = "product")
+@Table(name = "product", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"registry_id", "name"}),
 })
-public class DeviceDO {
+public class ProductDO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id")
-    private ProductDO product;
+    @JoinColumn(name = "registry_id")
+    private RegistryDO registry;
 
     @Column
     @CreationTimestamp
@@ -45,19 +49,9 @@ public class DeviceDO {
     @Column
     private String name;
 
-    @Column(unique = true)
-    private String clientId;
-
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> metadata;
 
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> configuration;
-
-    @Column
-    @Enumerated(EnumType.ORDINAL)
-    DeviceStatus status;
-
-    @Column(unique = true)
-    String sessionId;
 }

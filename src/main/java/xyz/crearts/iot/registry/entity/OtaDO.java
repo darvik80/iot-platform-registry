@@ -6,18 +6,20 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import xyz.crearts.iot.registry.entity.converter.HashMapConverter;
 
 import java.sql.Timestamp;
-import java.util.Map;
 
+/**
+ * @author ivan.kishchenko
+ * email ivan.kishchenko@lazada.com
+ */
 @Getter
 @Setter
-@Entity(name = "device")
-@Table(name = "device", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"product_id", "name"}),
+@Entity(name = "ota")
+@Table(name = "ota", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"prodict_id", "version"}),
 })
-public class DeviceDO {
+public class OtaDO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -43,21 +45,11 @@ public class DeviceDO {
     private String updatedBy;
 
     @Column
-    private String name;
-
-    @Column(unique = true)
-    private String clientId;
-
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> metadata;
-
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> configuration;
+    private String version;
 
     @Column
-    @Enumerated(EnumType.ORDINAL)
-    DeviceStatus status;
+    private String link;
 
-    @Column(unique = true)
-    String sessionId;
+    @Column
+    private Boolean status;
 }

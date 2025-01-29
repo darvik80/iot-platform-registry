@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class DeviceEvent {
     private DeviceEventType event;
+    private String registryName;
     private String productName;
     private String deviceName;
     private long timestamp;

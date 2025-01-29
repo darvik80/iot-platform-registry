@@ -1,11 +1,10 @@
 package xyz.crearts.iot.registry.middlewate.queue;
 
+import com.rabbitmq.client.*;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.rabbitmq.client.*;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;

@@ -40,6 +40,7 @@ public class DeviceEventsListener {
 
     DeviceConnectionEvent parceDeviceConnectionMessage(Envelope envelope, AMQP.BasicProperties properties) {
         Map<String, Object> headers = properties.getHeaders();
+        var vhost = headers.get(RabbitMQHeader.VHOST).toString();
         var clientProperties = headers.get(RabbitMQHeader.MQTT_CLIENT_PROPERTIES);
 
         if (!(clientProperties instanceof java.util.ArrayList<?>)) {
@@ -69,6 +70,7 @@ public class DeviceEventsListener {
                             .event(DeviceEventType.fromRoutingKey(envelope.getRoutingKey()))
                             .pid(ObjectUtils.nullSafeToString(headers.get(RabbitMQHeader.PID)))
                             .clientId(clientId)
+                            .registryName(vhost)
                             .productName(deviceInfo[0])
                             .deviceName(deviceInfo[1])
                             .macAddress(deviceInfo[2])
@@ -91,10 +93,6 @@ public class DeviceEventsListener {
             return null;
         }
 
-        if (!vhost.equals(data[1])) {
-            return null;
-        }
-
         int idx = 1;
         var productName = data[idx++];
         var deviceName = data.length == 4 ? "broadcast" : data[idx++];
@@ -103,6 +101,7 @@ public class DeviceEventsListener {
 
         return DeviceSubscribeEvent.builder()
                 .event(DeviceEventType.fromRoutingKey(envelope.getRoutingKey()))
+                .registryName(vhost)
                 .productName(productName)
                 .deviceName(deviceName)
                 .topic(topic)
@@ -116,10 +115,10 @@ public class DeviceEventsListener {
     void deviceConnectionEvent(Envelope envelope, AMQP.BasicProperties properties) {
         Map<String, Object> headers = properties.getHeaders();
 
-        String productName = ObjectUtils.nullSafeToString(headers.get(RabbitMQHeader.VHOST));
+        String registryName = ObjectUtils.nullSafeToString(headers.get(RabbitMQHeader.VHOST));
         var deviceInfo = parceDeviceConnectionMessage(envelope, properties);
         if (deviceInfo != null) {
-            if (!productName.equals(deviceInfo.getProductName())) {
+            if (!registryName.equals(deviceInfo.getRegistryName())) {
                 return;
             }
 
@@ -140,12 +139,14 @@ public class DeviceEventsListener {
 
     void deviceBindingEvent(Envelope envelope, AMQP.BasicProperties properties) {
         var deviceInfo = parceDeviceSubscribeMessage(envelope, properties);
-        if (deviceInfo.getEvent() == DeviceEventType.DEVICE_SUBSCRIBED) {
-            log.info("device sub: {}:{}, {}", deviceInfo.getProductName(), deviceInfo.getDeviceName(), deviceInfo.getTopic());
-            deviceManager.deviceSubscribe(deviceInfo);
-        } else if (deviceInfo.getEvent() == DeviceEventType.DEVICE_UNSUBSCRIBED) {
-            log.info("device un-sub: {}:{}, {}", deviceInfo.getProductName(), deviceInfo.getDeviceName(), deviceInfo.getTopic());
-            deviceManager.deviceUnsubscribe(deviceInfo);
+        if (deviceInfo != null) {
+            if (deviceInfo.getEvent() == DeviceEventType.DEVICE_SUBSCRIBED) {
+                log.info("device sub: {}:{}, {}", deviceInfo.getProductName(), deviceInfo.getDeviceName(), deviceInfo.getTopic());
+                deviceManager.deviceSubscribe(deviceInfo);
+            } else if (deviceInfo.getEvent() == DeviceEventType.DEVICE_UNSUBSCRIBED) {
+                log.info("device un-sub: {}:{}, {}", deviceInfo.getProductName(), deviceInfo.getDeviceName(), deviceInfo.getTopic());
+                deviceManager.deviceUnsubscribe(deviceInfo);
+            }
         }
     }
 
@@ -173,5 +174,17 @@ public class DeviceEventsListener {
                 }
             });
         }
+    }
+
+    @RabbitListener(
+            bindings = @QueueBinding(
+                    value = @Queue(value = "mqtt-publishing.device.config-req", durable = TRUE),
+                    exchange = @Exchange(value = "amq.topic", ignoreDeclarationExceptions = TRUE, type = ExchangeTypes.TOPIC),
+                    key = ".*.*.sys.config.req"
+            )
+    )
+    void deviceConfig(@Header("amqp_receivedRoutingKey") String key, @Headers Map<String, Object> headers, @Payload String payload) throws JsonProcessingException {
+        var keys = key.split("\\.");
+        deviceManager.deviceSendConfig(keys[2], keys[1]);
     }
 }
