@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ConnectionStatus from "./ConnectionStatusComponent.jsx";
 
 function Navigation({ status }) {
     return (
@@ -25,9 +26,7 @@ function Navigation({ status }) {
                         </li>
                     </ul>
                     <span className="navbar-text ms-auto">
-                        <span className={`badge ${status.includes('Connected') ? 'bg-success' : 'bg-warning'}`}>
-                            <i className="bi bi-wifi"></i> {status}
-                        </span>
+                        <ConnectionStatus/>
                     </span>
                 </div>
             </div>

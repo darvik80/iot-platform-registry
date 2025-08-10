@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWebSocket } from '../contexts/WebSocketContext.jsx';
-import DeviceFilters from '../components/DeviceFilters.jsx';
+import { useWebSocket } from '../contexts/WebSocketProvider';
+import DeviceFilters from '../components/DeviceFilters';
 import DeviceTable from '../components/DeviceTableComponent.jsx';
 
 function DevicesPage() {
-    const ws = useWebSocket();
+    const { sendRequest, isConnected } = useWebSocket();
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
-        group: '',
+        registry: '',
         status: '',
         search: ''
     });
@@ -17,55 +18,37 @@ function DevicesPage() {
         key: 'name',
         direction: 'ascending'
     });
-    const requestId = useRef(0);
     const navigate = useNavigate();
 
-    // Применение фильтров и сортировки
-    const applyFiltersAndSort = () => {
-        if (!ws) return;
+    const loadDevices = async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-        setLoading(true);
-        requestId.current = Date.now();
-        const request = {
-            jsonrpc: "2.0",
-            method: "getDevices",
-            params: {
+            const result = await sendRequest('getDevices', {
                 ...filters,
                 sortBy: sortConfig.key,
                 sortOrder: sortConfig.direction === 'ascending' ? 'asc' : 'desc'
-            },
-            id: requestId.current
-        };
-        ws.send(JSON.stringify(request));
+            }, {
+                timeout: 10000,
+                queueWhenOffline: true
+            });
+
+            setDevices(result || []);
+        } catch (err) {
+            console.error('Failed to load devices:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Запрос данных при монтировании и изменении фильтров/сортировки
     useEffect(() => {
-        if (!ws) return;
+        if (isConnected) {
+            loadDevices();
+        }
+    }, [isConnected, filters, sortConfig]);
 
-        const messageHandler = (event) => {
-            const response = JSON.parse(event.data);
-
-            if (response.id === requestId.current) {
-                if (response.result) {
-                    setDevices(response.result);
-                    setLoading(false);
-                } else if (response.error) {
-                    console.error('RPC Error:', response.error);
-                    setLoading(false);
-                }
-            }
-        };
-
-        ws.addEventListener('message', messageHandler);
-        applyFiltersAndSort();
-
-        return () => {
-            ws.removeEventListener('message', messageHandler);
-        };
-    }, [ws, filters, sortConfig]);
-
-    // Обработчик сортировки
     const handleSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -74,20 +57,17 @@ function DevicesPage() {
         setSortConfig({ key, direction });
     };
 
-    // Обработчик фильтров
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
     };
 
-    // Переход на страницу телеметрии
     const viewTelemetry = (deviceId) => {
         navigate(`/telemetry/${deviceId}`);
     };
 
-    // Очистка фильтров
     const clearFilters = () => {
-        setFilters({ group: '', status: '', search: '' });
+        setFilters({ registry: '', status: '', search: '' });
     };
 
     return (
@@ -97,22 +77,35 @@ function DevicesPage() {
                 <div>
                     <button
                         className="btn btn-primary"
-                        onClick={applyFiltersAndSort}
+                        onClick={loadDevices}
                         disabled={loading}
                     >
                         {loading ? (
                             <span className="spinner-border spinner-border-sm" role="status"></span>
                         ) : (
-                            <span><i className="bi bi-funnel"></i> Apply Filters</span>
+                            <span><i className="bi bi-funnel"></i> Refresh</span>
                         )}
                     </button>
                 </div>
             </div>
 
-            <DeviceFilters 
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    <i className="bi bi-exclamation-triangle me-2"></i>
+                    {error}
+                    <button
+                        className="btn btn-outline-danger btn-sm ms-2"
+                        onClick={loadDevices}
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
+
+            <DeviceFilters
                 filters={filters}
                 onFilterChange={handleFilterChange}
-                onApply={applyFiltersAndSort}
+                onApply={loadDevices}
                 loading={loading}
             />
 

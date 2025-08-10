@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useWebSocket } from '../contexts/WebSocketContext.jsx';
+import { useWebSocket } from '../contexts/WebSocketProvider.jsx';
 import DeviceInfo from '../components/DeviceInfoComponent.jsx';
 import TelemetryChart from '../components/TelemetryChartComponent.jsx';
 import CurrentStatus from '../components/CurrentStatusDisplay.jsx';
