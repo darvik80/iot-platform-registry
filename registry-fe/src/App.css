@@ -1,42 +1,368 @@
+
+/* Темная тема для всего приложения */
+:root {
+    --bs-body-bg: #121212;
+    --bs-body-color: #e0e0e0;
+    --bs-dark: #1e1e1e;
+    --bs-secondary: #2d2d2d;
+    --bs-light: #3d3d3d;
+    --bs-primary: #007bff;
+    --bs-success: #28a745;
+    --bs-warning: #ffc107;
+    --bs-danger: #dc3545;
+    --bs-info: #17a2b8;
+}
+
+/* Основные стили для темной темы */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    height: 100vh;
+    width: 100vw;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.App {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background-color: #121212;
+    margin: 0;
+    padding: 0;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Навигация на всю ширину */
+.navbar {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0; /* Предотвращаем сжатие навбара */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.navbar-dark {
+    background-color: #1e1e1e !important;
+    border-bottom: 1px solid #333;
 }
 
+.navbar .container-fluid {
+    max-width: none !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-brand {
+    color: #e0e0e0 !important;
+}
+
+.nav-link {
+    color: #b0b0b0 !important;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.navbar-text .badge {
+    background-color: var(--bs-success) !important;
+}
+
+/* Основной контейнер на всю ширину */
+.container-fluid {
+    flex: 1;
+    background-color: #121212;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+/* Убираем все лишние отступы и ограничения по ширине */
+.row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100%;
+}
+
+.col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6,
+.col-7, .col-8, .col-9, .col-10, .col-11, .col-12,
+.col-md, .col-md-1, .col-md-2, .col-md-3, .col-md-4,
+.col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9,
+.col-md-10, .col-md-11, .col-md-12,
+.col-lg, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4,
+.col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9,
+.col-lg-10, .col-lg-11, .col-lg-12 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* Карточки */
 .card {
-  padding: 2em;
+    background-color: #1e1e1e !important;
+    border: 1px solid #333 !important;
+    color: #e0e0e0 !important;
+    width: 100%;
 }
 
-.read-the-docs {
-  color: #888;
+.card-header {
+    background-color: #2d2d2d !important;
+    border-bottom: 1px solid #333 !important;
+    color: #e0e0e0 !important;
+}
+
+.card-header.bg-primary {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+.card-body {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+.card-footer {
+    background-color: #2d2d2d !important;
+    border-top: 1px solid #333 !important;
+}
+
+.card-footer.bg-light {
+    background-color: #2d2d2d !important;
+}
+
+/* Таблицы на всю ширину */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    color: #e0e0e0 !important;
+    background-color: #1e1e1e !important;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table-dark {
+    --bs-table-bg: #1e1e1e;
+    --bs-table-striped-bg: #2d2d2d;
+    --bs-table-hover-bg: #333;
+}
+
+.table-light {
+    background-color: #2d2d2d !important;
+    color: #e0e0e0 !important;
+}
+
+.table th {
+    background-color: #2d2d2d !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+.table td {
+    border-color: #333 !important;
+    color: #e0e0e0 !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #333 !important;
+    color: #ffffff !important;
+}
+
+/* Формы и инпуты */
+.form-control {
+    background-color: #2d2d2d !important;
+    border: 1px solid #444 !important;
+    color: #e0e0e0 !important;
+}
+
+.form-control:focus {
+    background-color: #2d2d2d !important;
+    border-color: var(--bs-primary) !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.form-select {
+    background-color: #2d2d2d !important;
+    border: 1px solid #444 !important;
+    color: #e0e0e0 !important;
+}
+
+.form-select:focus {
+    background-color: #2d2d2d !important;
+    border-color: var(--bs-primary) !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.form-label {
+    color: #e0e0e0 !important;
+}
+
+/* Кнопки */
+.btn-outline-secondary {
+    border-color: #666 !important;
+    color: #e0e0e0 !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #666 !important;
+    border-color: #666 !important;
+    color: white !important;
+}
+
+.btn-outline-primary {
+    border-color: var(--bs-primary) !important;
+    color: var(--bs-primary) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+/* Бэджи */
+.badge.bg-light {
+    background-color: #444 !important;
+    color: #e0e0e0 !important;
+}
+
+.text-dark {
+    color: #e0e0e0 !important;
+}
+
+.bg-light {
+    background-color: #2d2d2d !important;
+}
+
+/* Прогресс бары */
+.progress {
+    background-color: #333 !important;
+}
+
+.progress-bar {
+    background-color: var(--bs-primary) !important;
+}
+
+/* Спиннеры */
+.spinner-border {
+    color: var(--bs-primary) !important;
+}
+
+/* Алерты */
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    border-color: #dc3545 !important;
+    color: #f5c6cb !important;
+}
+
+/* Символы устройств */
+.symbol-label {
+    background-color: #333 !important;
+}
+
+.bg-light-success {
+    background-color: rgba(40, 167, 69, 0.2) !important;
+}
+
+.bg-light-warning {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+}
+
+.bg-light-danger {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+}
+
+.bg-light-info {
+    background-color: rgba(23, 162, 184, 0.2) !important;
+}
+
+.bg-light-primary {
+    background-color: rgba(0, 123, 255, 0.2) !important;
+}
+
+/* Текстовые цвета */
+.text-muted {
+    color: #888 !important;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Адаптивность для полноэкранного режима */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+
+    .navbar-collapse {
+        background-color: #1e1e1e;
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .col, [class*="col-"] {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* Высота карточек на всю доступную область */
+.card.h-100 {
+    height: 100% !important;
+}
+
+/* График контейнер */
+.chart-container {
+    background-color: #1e1e1e !important;
+    border: 1px solid #333;
+    border-radius: 0.375rem;
+    width: 100%;
+}
+
+/* Убираем максимальную ширину Bootstrap контейнеров */
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+/* Обеспечиваем полную ширину для всех основных элементов */
+.d-flex {
+    width: 100%;
+}
+
+/* Полная ширина для фильтров */
+.g-3 > * {
+    width: 100%;
 }
