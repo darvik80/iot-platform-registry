@@ -1,5 +1,4 @@
-// Java
-package xyz.crearts.iot.registry.rpc;
+package xyz.crearts.iot.jsonrpc.rpc;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

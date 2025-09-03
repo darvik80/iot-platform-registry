@@ -1,3 +1,6 @@
+ALTER DATABASE iot_platform SET timezone TO 'UTC';
+SELECT pg_reload_conf();
+
 INSERT INTO registry (id, name, uuid)
 VALUES (1, 'smart_home', '4d8a3176-c0c1-11ed-afa1-0242ac120002')
     ON CONFLICT DO NOTHING;

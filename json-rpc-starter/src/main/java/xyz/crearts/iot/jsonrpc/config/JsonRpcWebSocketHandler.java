@@ -1,28 +1,30 @@
 // Java
-package xyz.crearts.iot.registry.config;
+package xyz.crearts.iot.jsonrpc.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import xyz.crearts.iot.registry.rpc.*;
+import xyz.crearts.iot.jsonrpc.rpc.JsonRpcDispatcher;
+import xyz.crearts.iot.jsonrpc.rpc.JsonRpcError;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class JsonRpcWebSocketHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final JsonRpcDispatcher dispatcher;
 
     @Override
@@ -90,7 +92,7 @@ public class JsonRpcWebSocketHandler extends TextWebSocketHandler {
         } catch (IllegalArgumentException e) {
             return errorResponse(obj.get("id"), JsonRpcError.INVALID_PARAMS, "Invalid params", textNode(e.getMessage()));
         } catch (Exception e) {
-            log.error("JSON-RPC handler error for method {}", method, e);
+            //log.error("JSON-RPC handler error for method {}", method, e);
             return errorResponse(obj.get("id"), JsonRpcError.INTERNAL_ERROR, "Internal error", textNode(e.getMessage()));
         }
     }

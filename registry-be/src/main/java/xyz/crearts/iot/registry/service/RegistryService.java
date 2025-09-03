@@ -2,8 +2,8 @@ package xyz.crearts.iot.registry.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import xyz.crearts.iot.jsonrpc.rpc.JsonRpcDispatcher;
 import xyz.crearts.iot.registry.repository.RegistryRepository;
-import xyz.crearts.iot.registry.rpc.JsonRpcDispatcher;
 
 @Service
 public class RegistryService {

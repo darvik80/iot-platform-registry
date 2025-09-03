@@ -1,5 +1,4 @@
-// Java
-package xyz.crearts.iot.registry.rpc;
+package xyz.crearts.iot.jsonrpc.rpc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
